@@ -97,13 +97,15 @@ public class DeployCloudFoundryServerGroupAtomicOperation
       }
     }
 
+    // create service bindings and configure app/processes before building droplet
     createServiceBindings(serverGroup, description);
 
-    buildDroplet(packageId, serverGroup.getId(), description);
-
-    // update process before scaling process
+    // update processes before scaling them
     updateProcess(serverGroup.getId(), description);
     scaleApplication(serverGroup.getId(), description);
+
+    // build the app droplet
+    buildDroplet(packageId, serverGroup.getId(), description);
 
     if (!mapRoutes(
         description,
