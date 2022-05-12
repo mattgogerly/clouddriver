@@ -100,12 +100,12 @@ public class DeployCloudFoundryServerGroupAtomicOperation
     // create service bindings and configure app/processes before building droplet
     createServiceBindings(serverGroup, description);
 
+    // build the app droplet
+    buildDroplet(packageId, serverGroup.getId(), description);
+
     // update processes before scaling them
     updateProcess(serverGroup.getId(), description);
     scaleApplication(serverGroup.getId(), description);
-
-    // build the app droplet
-    buildDroplet(packageId, serverGroup.getId(), description);
 
     if (!mapRoutes(
         description,
@@ -466,7 +466,12 @@ public class DeployCloudFoundryServerGroupAtomicOperation
     CloudFoundryClient client = description.getClient();
     getTask().updateStatus(PHASE, "Building droplet for package '" + packageId + "'");
 
-    String buildId = client.getApplications().createBuild(packageId);
+    Integer memoryAmount =
+        convertToMb("memory", description.getApplicationAttributes().getMemory());
+    Integer diskSizeAmount =
+        convertToMb("disk quota", description.getApplicationAttributes().getDiskQuota());
+
+    String buildId = client.getApplications().createBuild(packageId, memoryAmount, diskSizeAmount);
 
     operationPoller.waitForOperation(
         () -> client.getApplications().buildCompleted(buildId),

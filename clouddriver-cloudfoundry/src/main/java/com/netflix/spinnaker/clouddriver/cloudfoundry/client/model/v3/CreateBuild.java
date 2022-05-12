@@ -25,8 +25,16 @@ public class CreateBuild {
   @JsonProperty("package")
   private PackageId packageId;
 
-  public CreateBuild(String packageId) {
+  @JsonProperty("staging_memory_in_mb")
+  private int memoryAmount;
+
+  @JsonProperty("staging_disk_in_mb")
+  private int diskSizeAmount;
+
+  public CreateBuild(String packageId, int memoryAmount, int diskSizeAmount) {
     this.packageId = new PackageId(packageId);
+    this.memoryAmount = memoryAmount;
+    this.diskSizeAmount = diskSizeAmount;
   }
 
   @RequiredArgsConstructor

@@ -656,8 +656,10 @@ public class Applications {
                     "Cloud Foundry signaled that package upload succeeded but failed to provide a response."));
   }
 
-  public String createBuild(String packageGuid) throws CloudFoundryApiException {
-    return safelyCall(() -> api.createBuild(new CreateBuild(packageGuid)))
+  public String createBuild(String packageGuid, int memoryAmount, int diskSizeAmount)
+      throws CloudFoundryApiException {
+    return safelyCall(
+            () -> api.createBuild(new CreateBuild(packageGuid, memoryAmount, diskSizeAmount)))
         .map(Build::getGuid)
         .orElseThrow(
             () ->
